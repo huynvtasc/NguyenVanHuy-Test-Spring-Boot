@@ -6,6 +6,7 @@ import com.example.NguyenVanHuyTest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,27 +17,29 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.create(user);
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        return ResponseEntity.ok(userService.create(user));
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User user) {
-        return userService.update(id, user);
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.update(id, user));
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userService.getById(id).orElse(null);
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.delete(id);
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+       userService.delete(id);
+       return ResponseEntity.ok("Deleted");
     }
 
     @GetMapping("/search")
-    public Page<User> searchUsers(UserSearchRequest request, Pageable pageable) {
-        return userService.search(request, pageable);
+    public ResponseEntity<Page<User>> searchUsers(UserSearchRequest request, Pageable pageable) {
+        return ResponseEntity.ok(userService.search(request, pageable));
     }
 }
